@@ -14,9 +14,12 @@ export default function AddProduct() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken) setToken(storedToken);
-    if (!token) router.push("/login");
-  }, []);
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
