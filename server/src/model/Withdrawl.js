@@ -1,7 +1,7 @@
 const pool = require("../DB/db");
 const joi = require("joi");
 
-// إنشاء الجدول بعد التأكد من وجود جدول user مسبقًا
+// إنشاء جدول product_withdrawal
 const createTable = async () => {
   try {
     await pool.query(`CREATE TABLE IF NOT EXISTS product_withdrawal (
@@ -16,13 +16,13 @@ const createTable = async () => {
       FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`);
+    console.log("Table product_withdrawal created successfully.");
   } catch (err) {
     console.error("Error creating product_withdrawal table:", err);
   }
 };
 
-createTable();
-
+// التحقق من صحة البيانات المسحوبة
 const validateCreateWithdrawl = (obj) => {
   const productSchema = joi.object({
     product_name: joi.string().trim().max(100).min(3).required(),
@@ -39,4 +39,5 @@ const validateCreateWithdrawl = (obj) => {
   return schema.validate(obj);
 };
 
-module.exports = { validateCreateWithdrawl };
+// تصدير الدوال
+module.exports = { createTable, validateCreateWithdrawl };
