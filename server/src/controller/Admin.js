@@ -45,4 +45,7 @@ module.exports = {
       return res.status(500).json({ message: "حدث خطأ غير متوقع." });
     }
   }),
+  setAdmin: asyncHandler(async (req,res)=>{
+    const user = await pool.query("UPDATE users SET isAdmin = true WHERE id = $1",[req.user.id])
+  })
 };
