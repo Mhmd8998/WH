@@ -45,7 +45,28 @@ module.exports = {
       return res.status(500).json({ message: "حدث خطأ غير متوقع." });
     }
   }),
-  setAdmin: asyncHandler(async (req,res)=>{
-    const user = await pool.query("UPDATE users SET isAdmin = true WHERE id = $1",[req.user.id])
-  })
+  setAdmin: asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(400).json({ message: "معرف المستخدم غير متوفر." });
+  }
+
+  try {
+    const result = await pool.query(
+      "UPDATE users SET isAdmin = true WHERE id = $1",
+      [userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "لم يتم العثور على المستخدم." });
+    }
+
+    return res.status(200).json({ message: "تم ترقية المستخدم إلى مسؤول بنجاح." });
+
+  } catch (error) {
+    console.error("Error in setAdmin:", error);
+    return res.status(500).json({ message: "حدث خطأ أثناء ترقية المستخدم." });
+  }
+})
 };
