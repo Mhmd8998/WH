@@ -15,17 +15,18 @@ const createTables = async () => {
       id SERIAL PRIMARY KEY,
       message TEXT NOT NULL,
       user_id INTEGER,
-      isRead INTEGER DEFAULT 0,
+      isRead BOOLEAN DEFAULT false,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`);
+
+    console.log("User and notification tables created successfully.");
   } catch (err) {
     console.error("Error creating tables", err);
   }
 };
 
-createTables();
-
+// التحقق من البيانات عند التسجيل وتسجيل الدخول
 const validateRegisterUser = (obj) => {
     const schema = joi.object({
       username: joi.string().trim().max(100).min(3).required(),
@@ -33,7 +34,7 @@ const validateRegisterUser = (obj) => {
     });
     return schema.validate(obj);
 };
-  
+
 const validateLoginUser = (obj) => {
     const schema = joi.object({
       username: joi.string().trim().min(3).required(),
@@ -42,7 +43,9 @@ const validateLoginUser = (obj) => {
     return schema.validate(obj);
 };
 
+// تصدير الدوال
 module.exports = {
+    createTables,
     validateRegisterUser,
     validateLoginUser
 };
