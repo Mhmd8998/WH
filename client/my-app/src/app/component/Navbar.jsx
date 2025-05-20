@@ -7,8 +7,8 @@ import bellIcon from "../../../public/bell2.png";
 export default function Navbar() {
   const [token, setToken] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const boxRef = useRef(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
@@ -35,71 +35,109 @@ export default function Navbar() {
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (boxRef.current && !boxRef.current.contains(e.target)) {
-        setShowNotifications(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <nav className="navbar bg-white shadow-sm px-3 py-2 fixed-top z-3">
-      <div className="d-flex justify-content-between w-100 align-items-center">
-        {/* الشعار */}
-        <div className="d-flex align-items-center">
-          <Image src={war} width={30} height={30} alt="logo" />
-          <span className="ms-2 fw-bold text-warning fs-5">المستودع</span>
-        </div>
-
-        {/* الإشعارات */}
-        <div className="d-flex align-items-center position-relative" ref={boxRef}>
-          <button
-            type="button"
-            onClick={() => setShowNotifications(!showNotifications)}
-            className="btn btn-light border rounded-circle p-2 position-relative"
-            style={{ transition: '0.2s' }}
-          >
-            <Image src={bellIcon} alt="Notifications" width={25} height={25} />
-            {unreadCount > 0 && (
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: '10px' }}>
-                {unreadCount}
-              </span>
-            )}
-          </button>
-
-          {showNotifications && (
-            <div
-              className="position-absolute bg-white border rounded shadow p-3"
-              style={{
-                top: '45px',
-                right: 0,
-                minWidth: '260px',
-                maxHeight: '300px',
-                overflowY: 'auto',
-                zIndex: 999
-              }}
+    <>
+      <nav className="navbar bg-white shadow-sm px-3 py-2 fixed-top z-3">
+        <div className="d-flex justify-content-between align-items-center w-100">
+          {/* القسم الأيسر: زر القائمة + الشعار */}
+          <div className="d-flex align-items-center gap-3">
+            <button
+              className="btn btn-light border rounded-circle p-2"
+              onClick={() => setShowMenu(true)}
             >
-              <h6 className="text-end">الإشعارات</h6>
-              <hr />
-              {notifications.length > 0 ? (
-                notifications.map(note => (
-                  <div key={note.id} className="mb-2 text-end">
-                    <div>{note.message}</div>
-                    <small className="text-muted">{new Date(note.created_at).toLocaleString()}</small>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center text-muted">لا إشعارات</div>
-              )}
+              <span style={{ fontSize: '18px' }}>☰</span>
+            </button>
+
+            <div className="d-flex align-items-center">
+              <Image src={war} width={30} height={30} alt="logo" />
+              <span className="ms-2 fw-bold text-warning fs-5">المستودع</span>
             </div>
-          )}
+          </div>
+
+          {/* زر الإشعارات */}
+          <div className="position-relative">
+            <button
+              type="button"
+              onClick={() => setShowNotifications(true)}
+              className="btn btn-light border rounded-circle p-2 position-relative"
+              style={{ transition: '0.2s' }}
+            >
+              <Image src={bellIcon} alt="Notifications" width={25} height={25} />
+              {unreadCount > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: '10px' }}>
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* نافذة الإشعارات - وسط الشاشة */}
+      {showNotifications && (
+        <div
+          className="position-fixed bg-white border rounded shadow p-4"
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1050,
+            width: '90%',
+            maxWidth: '400px',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}
+        >
+          <div className="text-end">
+            <button className="btn btn-sm btn-outline-danger mb-2" onClick={() => setShowNotifications(false)}>
+              إغلاق
+            </button>
+            <h5 className="mb-3">الإشعارات</h5>
+            <hr />
+            {notifications.length > 0 ? (
+              notifications.map(note => (
+                <div key={note.id} className="mb-3 text-end">
+                  <div>{note.message}</div>
+                  <small className="text-muted">{new Date(note.created_at).toLocaleString()}</small>
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-muted">لا إشعارات</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* نافذة القائمة - وسط الشاشة */}
+      {showMenu && (
+        <div
+          className="position-fixed bg-white border rounded shadow p-4"
+          style={{
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1050,
+            width: '90%',
+            maxWidth: '400px'
+          }}
+        >
+          <div className="text-end">
+            <button className="btn btn-sm btn-outline-danger mb-2" onClick={() => setShowMenu(false)}>
+              إغلاق
+            </button>
+            <h5 className="mb-3">القائمة</h5>
+            <hr />
+            <ul className="list-unstyled text-end">
+              <li><a href="#" className="text-decoration-none">الصفحة الرئيسية</a></li>
+              <li><a href="#" className="text-decoration-none">إدخال مخزون</a></li>
+              <li><a href="#" className="text-decoration-none">إخراج مخزون</a></li>
+              <li><a href="#" className="text-decoration-none">البحث</a></li>
+            </ul>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
