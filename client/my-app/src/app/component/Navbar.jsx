@@ -130,10 +130,10 @@ export default function Navbar() {
             <h5 className="mb-3">القائمة</h5>
             <hr />
             <ul className="list-unstyled text-end">
-              <li><a href="#" className="text-decoration-none">الصفحة الرئيسية</a></li>
-              <li><a href="#" className="text-decoration-none">إدخال مخزون</a></li>
-              <li><a href="#" className="text-decoration-none">إخراج مخزون</a></li>
-              <li><a href="#" className="text-decoration-none">البحث</a></li>
+              <li><a href="/product/add" className="text-decoration-none text-dark"> إدخال</a></li>
+              <li><a href="/product/withdraw" className="text-decoration-none text-dark"> إخراج</a></li>
+              <li><a href="/weeklyreport" className="text-decoration-none text-dark"> تقرير</a></li>
+              <li><a href="/product/search" className="text-decoration-none text-dark">البحث</a></li>
             </ul>
           </div>
         </div>
