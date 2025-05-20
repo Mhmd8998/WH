@@ -14,9 +14,12 @@ export default function Search() {
   
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken) setToken(storedToken);
-    if (!token) router.push("/login");
-  }, []);
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      router.push("/login");
+    }
+  }, [router]);
 
   const handleSearch = async () => {
     setMessage(""); // مسح الرسائل السابقة
