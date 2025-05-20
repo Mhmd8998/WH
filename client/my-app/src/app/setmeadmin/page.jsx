@@ -1,12 +1,24 @@
 "use client"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function SetMeAdmin() {
+  const [token, setToken] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) setToken(storedToken);
+    if (!token) router.push("/login");
+  }, []);
+  
   const handleClick = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/admin/setGre', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-        },
+          Authorization: `Bearer ${token}`,
+        }
         // body: JSON.stringify({ id: 123 }), // إذا كان هناك بيانات تُرسل
       });
 
