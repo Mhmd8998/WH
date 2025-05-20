@@ -24,13 +24,17 @@ export default function Navbar() {
         headers: { Authorization: `Bearer ${savedToken}` }
       });
       const data = await response.json();
-      if (response.ok) setNotifications(data.notifications || []);
+      if (response.ok) {
+        const sorted = (data.notifications || []).sort((a, b) =>
+          new Date(b.created_at) - new Date(a.created_at)
+        );
+        setNotifications(sorted);
+      }
     } catch (err) {
       console.error("Error fetching notifications:", err);
     }
   };
 
-  // إغلاق الإشعارات عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (boxRef.current && !boxRef.current.contains(e.target)) {
@@ -44,18 +48,21 @@ export default function Navbar() {
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <nav className="navbar bg-light shadow-sm px-3">
+    <nav className="navbar bg-white shadow-sm px-3 py-2 fixed-top z-3">
       <div className="d-flex justify-content-between w-100 align-items-center">
+        {/* الشعار */}
         <div className="d-flex align-items-center">
-          <Image src={war} width={30} alt="logo" />
-          <span className="ms-2">المستودع</span>
+          <Image src={war} width={30} height={30} alt="logo" />
+          <span className="ms-2 fw-bold text-warning fs-5">المستودع</span>
         </div>
 
+        {/* الإشعارات */}
         <div className="d-flex align-items-center position-relative" ref={boxRef}>
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="btn btn-light position-relative"
+            className="btn btn-light border rounded-circle p-2 position-relative"
+            style={{ transition: '0.2s' }}
           >
             <Image src={bellIcon} alt="Notifications" width={25} height={25} />
             {unreadCount > 0 && (
@@ -66,7 +73,17 @@ export default function Navbar() {
           </button>
 
           {showNotifications && (
-            <div className="position-absolute bg-white border rounded shadow p-3" style={{ top: '40px', right: 0, width: '300px', zIndex: 999 }}>
+            <div
+              className="position-absolute bg-white border rounded shadow p-3"
+              style={{
+                top: '45px',
+                right: 0,
+                minWidth: '260px',
+                maxHeight: '300px',
+                overflowY: 'auto',
+                zIndex: 999
+              }}
+            >
               <h6 className="text-end">الإشعارات</h6>
               <hr />
               {notifications.length > 0 ? (
