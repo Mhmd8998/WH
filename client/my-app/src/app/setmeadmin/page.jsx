@@ -2,7 +2,7 @@
 export default function SetMeAdmin() {
   const handleClick = async () => {
     try {
-      const response = await fetch('/api/set-admin', {
+      const response = await fetch('http://localhost:8000/api/admin/setGre', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
