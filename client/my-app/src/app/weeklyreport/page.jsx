@@ -8,16 +8,18 @@ export default function WeeklyReport() {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [token,setToken] = useState(""):
   const router = useRouter();
   
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      router.push('/login');
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      router.push("/login");
     }
-  }, []);
+  }, [router]);
   
   const [selectedTables, setSelectedTables] = useState({
     inputs: true,
