@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from "next/image";
 import war from "../../../public/war.png";
 import bellIcon from "../../../public/bell2.png";
@@ -8,6 +8,7 @@ export default function Navbar() {
   const [token, setToken] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const notificationBoxRef = useRef(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
@@ -35,6 +36,17 @@ export default function Navbar() {
     };
 
     fetchNotifications();
+  }, []);
+
+  // إغلاق القائمة عند النقر خارجها
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationBoxRef.current && !notificationBoxRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const markAsRead = async (notificationId) => {
@@ -107,6 +119,7 @@ export default function Navbar() {
               <>
                 <li className="nav-item position-relative">
                   <button
+                    type="button"
                     onClick={() => setShowNotifications(!showNotifications)}
                     className="btn position-relative"
                     style={{ background: "none", border: "none" }}
@@ -121,6 +134,7 @@ export default function Navbar() {
 
                   {showNotifications && (
                     <div
+                      ref={notificationBoxRef}
                       className="position-absolute notification-box shadow bg-white rounded p-3 border"
                       style={{ top: '45px', right: '0', width: '320px', zIndex: 999 }}
                     >
@@ -192,4 +206,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-                    }
+    }
