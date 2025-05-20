@@ -1,7 +1,7 @@
-const pool = require("../DB/db");
+const pool = require("../DB/db"); // تأكد أن اسم المسار صحيح
 const joi = require("joi");
 
-// إنشاء جدول product و product_log فقط
+// إنشاء جدول product و product_log
 const createTables = async () => {
   try {
     await pool.query(`
@@ -13,7 +13,7 @@ const createTables = async () => {
         quantity INTEGER NOT NULL,
         user_id INTEGER,
         timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES "users"(id)
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
       );
     `);
 
@@ -28,12 +28,11 @@ const createTables = async () => {
         timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    console.log("Product tables created successfully.");
   } catch (err) {
-    console.error("Error creating tables", err);
+    console.error("Error creating product tables:", err);
   }
 };
-
-createTables();
 
 // التحقق من البيانات عند إنشاء منتج
 const validateCreateProductSchema = (obj) => {
@@ -46,4 +45,8 @@ const validateCreateProductSchema = (obj) => {
   return schema.validate(obj);
 };
 
-module.exports = { validateCreateProductSchema };
+// تصدير الدوال
+module.exports = {
+  createTables,
+  validateCreateProductSchema,
+};
