@@ -17,7 +17,7 @@ module.exports = {
 
     try {
       const existingUserResult = await pool.query(
-        `SELECT * FROM "user" WHERE username = $1`,
+        `SELECT * FROM "users" WHERE username = $1`,
         [username]
       );
 
@@ -28,7 +28,7 @@ module.exports = {
       const hashpass = await bcrypt.hash(password, 10);
 
       await pool.query(
-        `INSERT INTO "user" (username, password) VALUES ($1, $2)`,
+        `INSERT INTO "users" (username, password) VALUES ($1, $2)`,
         [username, hashpass]
       );
 
@@ -50,7 +50,7 @@ module.exports = {
 
     try {
       const result = await pool.query(
-        `SELECT * FROM "user" WHERE username = $1`,
+        `SELECT * FROM "users" WHERE username = $1`,
         [username]
       );
 
