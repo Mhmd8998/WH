@@ -42,7 +42,7 @@ export default function Navbar() {
 
   const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/mark-read${notificationId}`, {
+      const response = await fetch(`http://localhost:8000/api/admin/mark-read/${notificationId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -190,4 +190,4 @@ export default function Navbar() {
       )}
     </>
   );
-}
+    }
