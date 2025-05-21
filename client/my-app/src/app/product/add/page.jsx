@@ -6,8 +6,7 @@ export default function AddProduct() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [status, setStatus] = useState("");
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null);
+  
   const [message, setMessage] = useState("");
   const [token, setToken] = useState("");
   const router = useRouter();
@@ -21,34 +20,45 @@ export default function AddProduct() {
     }
   }, [router]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
-  };
+  
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      setMessage("اسم المنتج مطلوب ولا يمكن أن يكون فارغًا.");
+      return;
+    }
+
     const formData = new FormData();
-    formData.append("name", name);
+    formData.append("name", name.trim());
     formData.append("status", status);
     formData.append("quantity", quantity);
     if (image) formData.append("image", image);
 
-    const res = await fetch("http://localhost:8000/api/product/", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    // فقط للتأكد مما يُرسل:
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
 
-    const data = await res.json();
-    setMessage(data.message);
+    try {
+      const res = await fetch("http://localhost:8000/api/product/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-    if (res.ok) {
-      setTimeout(() => router.push("/"), 1000);
+      const data = await res.json();
+      setMessage(data.message || "تمت العملية");
+
+      if (res.ok) {
+        setTimeout(() => router.push("/"), 1000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("حدث خطأ أثناء إضافة المنتج.");
     }
   };
 
@@ -114,30 +124,7 @@ export default function AddProduct() {
               min={1}
             />
           </div>
-        </div>
-
-        {/* رفع صورة */}
-        <div className="mb-3">
-          <label className="form-label fw-bold">صورة المنتج (اختياري)</label>
-          <input
-            type="file"
-            className="form-control"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </div>
-
-        {/* معاينة الصورة */}
-        {preview && (
-          <div className="text-center mb-3">
-            <img
-              src={preview}
-              alt="معاينة المنتج"
-              className="img-thumbnail"
-              style={{ maxWidth: "200px" }}
-            />
-          </div>
-        )}
+        </div>        
 
         {/* زر الإرسال */}
         <button type="submit" className="btn btn-success w-100 fw-bold">
@@ -151,4 +138,4 @@ export default function AddProduct() {
       </form>
     </div>
   );
-}
+          }
