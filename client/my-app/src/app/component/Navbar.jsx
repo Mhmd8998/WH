@@ -120,7 +120,7 @@ export default function Navbar() {
             <hr />
             {notifications.length > 0 ? (
               notifications.map(note => (
-                <div key={note._id} className="mb-3 text-end border-bottom pb-2">
+                <div key={note.id} className="mb-3 text-end border-bottom pb-2">
                   <div>{note.message}</div>
                   <small className="text-muted d-block">{new Date(note.created_at).toLocaleString()}</small>
 
