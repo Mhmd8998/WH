@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import war from "../../../public/war.png";
 import bellIcon from "../../../public/bell2.png";
@@ -33,6 +33,11 @@ export default function Navbar() {
     } catch (err) {
       console.error("Error fetching notifications:", err);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login'; // أو '/' حسب صفحة تسجيل الدخول
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -75,7 +80,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* نافذة الإشعارات - وسط الشاشة */}
+      {/* نافذة الإشعارات */}
       {showNotifications && (
         <div
           className="position-fixed bg-white border rounded shadow p-4"
@@ -110,7 +115,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* نافذة القائمة - وسط الشاشة */}
+      {/* نافذة القائمة */}
       {showMenu && (
         <div
           className="position-fixed bg-white border rounded shadow p-4"
@@ -133,11 +138,16 @@ export default function Navbar() {
               <li><a href="/product/add" className="text-decoration-none text-dark"> إدخال</a></li>
               <li><a href="/product/withdraw" className="text-decoration-none text-dark"> إخراج</a></li>
               <li><a href="/weeklyreport" className="text-decoration-none text-dark"> تقرير</a></li>
-              <li><a href="/product/search" className="text-decoration-none text-dark">البحث</a></li>
+              <li><a href="/product/search" className="text-decoration-none text-dark"> البحث</a></li>
+              <li>
+                <button onClick={handleLogout} className="btn btn-outline-danger w-100 mt-3">
+                  تسجيل الخروج
+                </button>
+              </li>
             </ul>
           </div>
         </div>
       )}
     </>
   );
-}
+            }
