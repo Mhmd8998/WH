@@ -37,7 +37,23 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/login'; // أو '/' حسب صفحة تسجيل الدخول
+    window.location.href = '/login';
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/admin/mark-read${id}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setNotifications(prev =>
+          prev.map(n => (n._id === id ? { ...n, isRead: true } : n))
+        );
+      }
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -46,14 +62,15 @@ export default function Navbar() {
     <>
       <nav className="navbar bg-white shadow-sm px-3 py-2 fixed-top z-3">
         <div className="d-flex justify-content-between align-items-center w-100">
-          {/* القسم الأيسر: زر القائمة + الشعار */}
           <div className="d-flex align-items-center gap-3">
-            <button
-              className="btn btn-light border rounded-circle p-2"
-              onClick={() => setShowMenu(true)}
-            >
-              <span style={{ fontSize: '18px' }}>☰</span>
-            </button>
+            {token && (
+              <button
+                className="btn btn-light border rounded-circle p-2"
+                onClick={() => setShowMenu(true)}
+              >
+                <span style={{ fontSize: '18px' }}>☰</span>
+              </button>
+            )}
 
             <div className="d-flex align-items-center">
               <Image src={war} width={30} height={30} alt="logo" />
@@ -61,27 +78,27 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* زر الإشعارات */}
-          <div className="position-relative">
-            <button
-              type="button"
-              onClick={() => setShowNotifications(true)}
-              className="btn btn-light border rounded-circle p-2 position-relative"
-              style={{ transition: '0.2s' }}
-            >
-              <Image src={bellIcon} alt="Notifications" width={25} height={25} />
-              {unreadCount > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: '10px' }}>
-                  {unreadCount}
-                </span>
-              )}
-            </button>
-          </div>
+          {token && (
+            <div className="position-relative">
+              <button
+                type="button"
+                onClick={() => setShowNotifications(true)}
+                className="btn btn-light border rounded-circle p-2 position-relative"
+              >
+                <Image src={bellIcon} alt="Notifications" width={25} height={25} />
+                {unreadCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: '10px' }}>
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* نافذة الإشعارات */}
-      {showNotifications && (
+      {showNotifications && token && (
         <div
           className="position-fixed bg-white border rounded shadow p-4"
           style={{
@@ -103,9 +120,18 @@ export default function Navbar() {
             <hr />
             {notifications.length > 0 ? (
               notifications.map(note => (
-                <div key={note.id} className="mb-3 text-end">
+                <div key={note._id} className="mb-3 text-end border-bottom pb-2">
                   <div>{note.message}</div>
-                  <small className="text-muted">{new Date(note.created_at).toLocaleString()}</small>
+                  <small className="text-muted d-block">{new Date(note.created_at).toLocaleString()}</small>
+
+                  {!note.isRead && (
+                    <button
+                      className="btn btn-sm btn-outline-primary mt-1"
+                      onClick={() => markAsRead(note._id)}
+                    >
+                      تعيين كمقروء
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
@@ -116,7 +142,7 @@ export default function Navbar() {
       )}
 
       {/* نافذة القائمة */}
-      {showMenu && (
+      {showMenu && token && (
         <div
           className="position-fixed bg-white border rounded shadow p-4"
           style={{
@@ -150,4 +176,4 @@ export default function Navbar() {
       )}
     </>
   );
-            }
+        }
