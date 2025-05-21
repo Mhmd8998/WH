@@ -34,7 +34,7 @@ export default function SetMeAdmin() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        router.push("/");
       } else {
         alert(`خطأ: ${data.message}`);
       }
