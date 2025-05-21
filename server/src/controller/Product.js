@@ -4,13 +4,14 @@ const { validateCreateProductSchema } = require('../model/Product');
 
 module.exports = {
     createProduct: asyncHandler(async (req, res) => {
-        const { error } = validateCreateProductSchema(req.body);
+        const { name, status, quantity } = req.body;
+        
+        const { error } = validateCreateProductSchema({name,status,quantity});
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
 
-        const { name, status, quantity } = req.body;
-
+        
         try {
             const existingProductResult = await pool.query(
                 `SELECT * FROM product WHERE name = $1 AND status = $2`,
