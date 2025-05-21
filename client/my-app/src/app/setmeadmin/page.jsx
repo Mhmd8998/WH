@@ -10,14 +10,13 @@ export default function SetMeAdmin() {
 
   useEffect(() => {
     const ontoken = localStorage.getItem("token");
-
+    console.log("Token being used:", ontoken);
     if (ontoken) {
       setToken(ontoken);
     } else {
       router.push("/login"); // إعادة التوجيه إذا لم يكن هناك توكن
     }
   }, [router]);
-console.log("Token being used:", token);
   const handleClick = async () => {
     if (!token) {
       alert("الرجاء تسجيل الدخول أولاً.");
