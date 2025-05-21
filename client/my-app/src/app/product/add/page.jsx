@@ -6,7 +6,6 @@ export default function AddProduct() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [status, setStatus] = useState("");
-  
   const [message, setMessage] = useState("");
   const [token, setToken] = useState("");
   const router = useRouter();
@@ -20,8 +19,6 @@ export default function AddProduct() {
     }
   }, [router]);
 
-  
-
   const handleAddProduct = async (e) => {
     e.preventDefault();
 
@@ -30,23 +27,20 @@ export default function AddProduct() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", name.trim());
-    formData.append("status", status);
-    formData.append("quantity", quantity);
-    
-    // فقط للتأكد مما يُرسل:
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
+    const body = {
+      name: name.trim(),
+      status,
+      quantity,
+    };
 
     try {
       const res = await fetch("http://localhost:8000/api/product/", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -70,7 +64,6 @@ export default function AddProduct() {
         onSubmit={handleAddProduct}
         className="bg-white shadow rounded p-4"
         style={{ width: "100%", maxWidth: "500px" }}
-        encType="multipart/form-data"
       >
         <h3 className="text-center mb-4 text-primary fw-bold">
           ➕ إضافة منتج جديد
@@ -123,7 +116,7 @@ export default function AddProduct() {
               min={1}
             />
           </div>
-        </div>        
+        </div>
 
         {/* زر الإرسال */}
         <button type="submit" className="btn btn-success w-100 fw-bold">
@@ -137,4 +130,4 @@ export default function AddProduct() {
       </form>
     </div>
   );
-          }
+        }
