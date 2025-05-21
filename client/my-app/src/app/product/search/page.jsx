@@ -11,7 +11,7 @@ export default function Search() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -22,37 +22,39 @@ export default function Search() {
   }, [router]);
 
   const handleSearch = async () => {
-    setMessage(""); // مسح الرسائل السابقة
-    setLoading(true); // تفعيل حالة التحميل
+    setMessage("");
+    setLoading(true);
     const requestBody = { name, status };
+
     try {
-      // البحث في المنتجات
       const res = await fetch("http://localhost:8000/api/product/search/", {
-        method: "POST", // تأكد أن الطريقة هي POST أو GET
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(requestBody), // إرسال البيانات في الجسم (body)
+        body: JSON.stringify(requestBody),
       });
 
       const data = await res.json();
+      console.log("Response Data:", data); // لمراقبة البيانات
+
       if (res.ok) {
-        setProducts(data.products || []); // assuming response contains products
-        setWithdrawals(data.withdrawals || []); // assuming response contains withdrawals
+        setProducts(data);        // البيانات هي مصفوفة مباشرة
+        setWithdrawals([]);       // لا توجد سحوبات في هذا الرد
       } else {
         setMessage(data.message || "حدث خطأ أثناء البحث");
       }
     } catch (error) {
       setMessage(error.message || "حدث خطأ غير متوقع");
     } finally {
-      setLoading(false); // إنهاء حالة التحميل
+      setLoading(false);
     }
   };
 
   return (
     <div className="container mt-5" dir="rtl">
-      <h2 className="text-center mb-4 text-primary">🔍 بحث المنتجات والسحوبات</h2>
+      <h2 className="text-center mb-4 text-primary">🔍 بحث المنتجات</h2>
 
       {/* نموذج البحث */}
       <div className="mb-4">
@@ -78,7 +80,7 @@ export default function Search() {
         <button
           onClick={handleSearch}
           className="btn btn-primary w-100 mb-3"
-          disabled={loading} // تعطيل الزر أثناء التحميل
+          disabled={loading}
         >
           {loading ? (
             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -121,33 +123,6 @@ export default function Search() {
           </table>
         </div>
       )}
-
-      {/* جدول عرض السحوبات */}
-      {withdrawals.length > 0 && (
-        <div className="mt-4">
-          <h4 className="text-center text-danger">السحوبات</h4>
-          <table className="table table-bordered table-striped shadow-sm">
-            <thead className="table-dark">
-              <tr>
-                <th>اسم المنتج</th>
-                <th>الحالة</th>
-                <th>الكمية</th>
-                <th>الملاحظة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {withdrawals.map((withdrawal, index) => (
-                <tr key={index}>
-                  <td>{withdrawal.product_name}</td>
-                  <td>{withdrawal.status}</td>
-                  <td>{withdrawal.quantity}</td>
-                  <td>{withdrawal.note}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   );
-}
+         }
