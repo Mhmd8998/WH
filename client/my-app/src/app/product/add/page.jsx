@@ -34,8 +34,7 @@ export default function AddProduct() {
     formData.append("name", name.trim());
     formData.append("status", status);
     formData.append("quantity", quantity);
-    if (image) formData.append("image", image);
-
+    
     // فقط للتأكد مما يُرسل:
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
