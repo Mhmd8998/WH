@@ -1,13 +1,16 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect ,useState} from "react";
 import { useRouter } from "next/navigation";
 
 export default function SetMeAdmin() {
   const router = useRouter();
-
+  const [token, setToken] = useState("");
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const ontoken = localStorage.getItem("token");
+    
+    if (ontoken) {
+      setToken(ontoken)
+    }else{
       router.push("/login");
     }
   }, []);
