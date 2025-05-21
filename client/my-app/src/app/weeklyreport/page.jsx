@@ -8,7 +8,7 @@ export default function WeeklyReport() {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [token,setToken] = useState(""):
+  const [token,setToken] = useState("");
   const router = useRouter();
   
 
