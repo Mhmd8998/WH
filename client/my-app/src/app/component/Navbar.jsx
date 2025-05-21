@@ -48,7 +48,7 @@ export default function Navbar() {
       });
       if (response.ok) {
         setNotifications(prev =>
-          prev.map(n => (n._id === id ? { ...n, isRead: true } : n))
+          prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
         );
       }
     } catch (err) {
