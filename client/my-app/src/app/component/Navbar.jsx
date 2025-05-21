@@ -40,19 +40,22 @@ export default function Navbar() {
     window.location.href = '/login';
   };
 
-  const markAsRead = async (id) => {
+  const markAsRead = async (notificationId) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/mark-read${id}`, {
+      const response = await fetch(`http://localhost:8000/api/admin/mark-read/${notificationId}`, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
+
       if (response.ok) {
         setNotifications(prev =>
-          prev.map(n => (n.id === id ? { ...n, isRead: true } : n))
+          prev.map(n => n.id === notificationId ? { ...n, isRead: true } : n)
         );
       }
     } catch (err) {
-      console.error("Error marking notification as read:", err);
+      console.error("Error marking as read:", err);
     }
   };
 
@@ -119,23 +122,34 @@ export default function Navbar() {
             <h5 className="mb-3">الإشعارات</h5>
             <hr />
             {notifications.length > 0 ? (
-              notifications.map(note => (
-                <div key={note.id} className="mb-3 text-end border-bottom pb-2">
-                  <div>{note.message}</div>
-                  <small className="text-muted d-block">{new Date(note.created_at).toLocaleString()}</small>
-
+              notifications.map((note, index) => (
+                <li
+                  key={index}
+                  className="mb-3 d-flex gap-2 align-items-start border-start border-4 ps-3"
+                  style={{
+                    borderColor: note.isRead ? "#ced4da" : "#0d6efd",
+                    backgroundColor: note.isRead ? "#f8f9fa" : "#f1f8ff",
+                    borderRadius: '6px',
+                    padding: '8px'
+                  }}
+                >
+                  <span style={{ fontSize: '18px' }}>📢</span>
+                  <div className="flex-grow-1 text-end">
+                    <div className="fw-semibold text-dark">{note.message}</div>
+                    <small className="text-muted mt-1 d-block">{new Date(note.created_at).toLocaleString()}</small>
+                  </div>
                   {!note.isRead && (
                     <button
-                      className="btn btn-sm btn-outline-primary mt-1"
-                      onClick={() => markAsRead(note._id)}
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => markAsRead(note.id)}
                     >
-                      تعيين كمقروء
+                      تمّت القراءة
                     </button>
                   )}
-                </div>
+                </li>
               ))
             ) : (
-              <div className="text-center text-muted">لا إشعارات</div>
+              <li className="text-muted text-center">لا توجد إشعارات حالياً</li>
             )}
           </div>
         </div>
@@ -176,4 +190,4 @@ export default function Navbar() {
       )}
     </>
   );
-        }
+}
