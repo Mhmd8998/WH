@@ -1,34 +1,37 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SetMeAdmin() {
-  const [token, setToken] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
+    const token = localStorage.getItem("token");
+    if (!token) {
       router.push("/login");
     }
-  }, [router]);
+  }, []);
 
   const handleClick = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("الرجاء تسجيل الدخول أولاً.");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:8000/api/admin/setGre", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        // body: JSON.stringify({ id: 123 }), // إذا كنت بحاجة لإرسال ID المستخدم
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message); // مثلاً: "تم ترقية المستخدم إلى مسؤول بنجاح."
+        alert(data.message);
       } else {
         alert(`خطأ: ${data.message}`);
       }
