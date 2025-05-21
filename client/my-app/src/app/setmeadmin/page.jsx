@@ -17,7 +17,7 @@ export default function SetMeAdmin() {
       router.push("/login"); // إعادة التوجيه إذا لم يكن هناك توكن
     }
   }, [router]);
-
+console.log("Token being used:", token);
   const handleClick = async () => {
     if (!token) {
       alert("الرجاء تسجيل الدخول أولاً.");
